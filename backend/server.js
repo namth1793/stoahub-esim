@@ -58,8 +58,7 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/wp-json/wc/v3', wooRoutes);
 app.use('/esim', esimRoutes);
-app.use('/', webhookRoutes);        // Public webhooks (no auth)
-app.use('/api', webhookRoutes);      // Protected endpoints (with auth)
+app.use('/', webhookRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
