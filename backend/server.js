@@ -8,7 +8,6 @@ import { fileURLToPath } from 'url';
 // Import routes
 import authRoutes from './src/routes/auth.js';
 import esimRoutes from './src/routes/esim.js';
-import paymentRoutes from './src/routes/payment.js';
 import webhookRoutes from './src/routes/webhookRoutes.js'; // THÊM DÒNG NÀY
 import wooRoutes from './src/routes/woocommerce.js';
 
@@ -58,7 +57,6 @@ app.use((req, res, next) => {
 // Routes
 app.use('/auth', authRoutes);
 app.use('/wp-json/wc/v3', wooRoutes);
-app.use('/payment', paymentRoutes);
 app.use('/esim', esimRoutes);
 app.use('/', webhookRoutes);        // Public webhooks (no auth)
 app.use('/api', webhookRoutes);      // Protected endpoints (with auth)
@@ -81,7 +79,6 @@ app.get('/test', (req, res) => {
     endpoints: {
       auth: ['POST /auth/register', 'POST /auth/login', 'GET /auth/me'],
       woocommerce: ['GET /wp-json/wc/v3/products', 'GET /wp-json/wc/v3/orders'],
-      payment: ['POST /payment/amazon-pay/init', 'GET /payment/amazon-pay/status/:orderId'],
       esim: ['POST /esim/activate', 'GET /esim/status/:esimId', 'GET /esim/install-guide/:esimId'],
       webhook: ['POST /webhooks/woocommerce/order-completed'], // THÊM
       admin: ['POST /api/admin/provision/manual', 'GET /api/admin/provision/status/:orderId'] // THÊM
