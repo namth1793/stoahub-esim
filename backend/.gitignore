@@ -11,7 +11,12 @@ yarn.lock
 # Build files
 dist/
 build/
+
+# Log files
 *.log
+combined.log
+error.log
+logs/
 
 # IDE files
 .vscode/
