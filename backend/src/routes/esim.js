@@ -255,6 +255,70 @@ async function handleBalanceLow(data) {
 }
 
 // =====================================================
+// PUBLIC ROUTES (no authentication required)
+// =====================================================
+
+/**
+ * @route   GET /esim/packages/public
+ * @desc    Get all available eSIM packages with real prices from eSIM Access API
+ * @access  Public
+ */
+router.get('/packages/public', async (req, res) => {
+  try {
+    const { slug, locationCode, type = 'BASE' } = req.query;
+
+    const params = { type };
+    if (slug) params.slug = slug;
+    if (locationCode) params.locationCode = locationCode;
+
+    const result = await esimClient.getAllDataPackages(params);
+
+    // eSIM Access API wraps response: result.obj.packageList or result.obj or array
+    const raw =
+      result?.obj?.packageList ||
+      result?.obj ||
+      result?.data ||
+      result?.packageList ||
+      (Array.isArray(result) ? result : []);
+
+    const packages = Array.isArray(raw) ? raw : [];
+
+    // Price is integer units (divide by 10000 = USD)
+    const transformed = packages.map(pkg => ({
+      packageCode: pkg.packageCode,
+      name: pkg.name || pkg.packageName || '',
+      price: (pkg.price || 0) / 10000,
+      currencyCode: pkg.currencyCode || 'USD',
+      dataAmount: formatBytes(pkg.volume),
+      dataBytes: pkg.volume || 0,
+      duration: pkg.duration || 0,
+      durationUnit: (pkg.durationUnit || 'DAY').toLowerCase(),
+      location: pkg.location || pkg.locationCode || '',
+      slug: pkg.slug || '',
+      type: pkg.type || 'BASE',
+      retailPrice: (pkg.retailPrice || 0) / 10000,
+    }));
+
+    res.json({ success: true, data: transformed, total: transformed.length });
+  } catch (error) {
+    logger.error('Get public packages error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch eSIM packages',
+      message: error.message,
+    });
+  }
+});
+
+function formatBytes(bytes) {
+  if (!bytes || bytes <= 0) return 'Unlimited';
+  const gb = bytes / (1024 ** 3);
+  if (gb >= 1) return `${Number.isInteger(gb) ? gb : gb.toFixed(1)}GB`;
+  const mb = bytes / (1024 ** 2);
+  return `${Math.round(mb)}MB`;
+}
+
+// =====================================================
 // PROTECTED ROUTES (require authentication)
 // =====================================================
 
@@ -266,7 +330,7 @@ async function handleBalanceLow(data) {
 router.get('/packages', authenticateToken, validatePackageQuery, async (req, res) => {
   try {
     const { region, type } = req.query;
-    
+
     // Get packages from ESIM provider
     const packages = await esimClient.getAllDataPackages();
     

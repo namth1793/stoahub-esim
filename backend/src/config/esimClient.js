@@ -41,8 +41,9 @@ class ESIMClient {
   }
 
   // Các method tương ứng với API trong ảnh
-  async getAllDataPackages() {
-    return this.request('/GetAllDataPackages');
+  // params: { type: 'BASE'|'TOPUP', slug, locationCode, packageCode }
+  async getAllDataPackages(params = {}) {
+    return this.request('/api/v1/open/package/list', params);
   }
 
   async orderProfiles(orderData) {
