@@ -169,7 +169,7 @@ export const getOrders = async (req, res) => {
 
     // First, get user's email from Supabase
     const { data: user } = await supabaseAdmin
-      .from('users')
+      .from('profiles')
       .select('email')
       .eq('id', req.user.id)
       .single();
