@@ -1,0 +1,8 @@
+{
+  "buildCommand": "cd frontend/global-esim-connect && npm install && npm run build",
+  "outputDirectory": "frontend/global-esim-connect/dist",
+  "installCommand": "echo 'install skipped'",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

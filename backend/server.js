@@ -67,7 +67,8 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: process.env.NODE_ENV,
-    version: '1.0.0'
+    version: '1.0.0',
+    wordpress_url: process.env.WORDPRESS_URL || 'NOT SET'
   });
 });
 
